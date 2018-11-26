@@ -30,7 +30,7 @@ RUN apt-get update \
 && apt-get install -y build-essential git clang libboost-dev libstdc++-5-dev autoconf \
 && rm -rf /var/lib/apt/lists
 
-RUN git clone --depth=1 https://github.com/qmfrederik/extfstools \
+RUN git clone --depth=1 https://github.com/kubedroid/extfstools \
 && cd extfstools \
 && ./autogen.sh \
 && ./configure \
@@ -38,12 +38,24 @@ RUN git clone --depth=1 https://github.com/qmfrederik/extfstools \
 && cp ext2rd /usr/local/bin \
 && cp ext2dump /usr/local/bin
 
+FROM ubuntu:bionic AS fatcat
+RUN apt-get update \
+&& apt-get install -y build-essential git cmake \
+&& rm -rf /var/lib/apt/lists
+
+RUN git clone --depth=1 https://github.com/Gregwar/fatcat \
+&& cd fatcat \
+&& cmake . \
+&& make \
+&& make install
+
 FROM ubuntu:bionic
 
 COPY --from=grub /grub /
 COPY --from=mkbootfs /usr/local/bin/mkbootfs /usr/local/bin/
 COPY --from=extfstools /usr/local/bin/ext2rd /usr/local/bin/
 COPY --from=extfstools /usr/local/bin/ext2dump /usr/local/bin/
+COPY --from=fatcat /usr/local/bin/fatcat /usr/local/bin
 
 RUN apt-get update \
 && apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools \
