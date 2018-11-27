@@ -1,7 +1,7 @@
 FROM ubuntu:bionic AS grub
 
 RUN apt-get update \
-&& apt-get install -y wget build-essential autoconf automake python bison flex nano patch \
+&& apt-get install -y wget build-essential autoconf automake python bison flex \
 && rm -rf /var/lib/apt/lists/*
 
 RUN wget -nv -nc ftp://ftp.gnu.org/gnu/grub/grub-2.02.tar.xz \
@@ -58,7 +58,7 @@ COPY --from=extfstools /usr/local/bin/ext2dump /usr/local/bin/
 COPY --from=fatcat /usr/local/bin/fatcat /usr/local/bin
 
 RUN apt-get update \
-&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools \
+&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools nano patch \
 && rm -rf /var/lib/apt/lists*
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/android
